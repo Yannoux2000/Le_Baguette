@@ -154,10 +154,10 @@ class Model():
 		self.saver = tf.train.Saver(max_to_keep=24, keep_checkpoint_every_n_hours=1)
 
 	def save(self, name):
-		self.saver.save(self.sess, "./agents/LeBaguette/saves/{}".format(name)) # aim at this directory/saves/
+		self.saver.save(self.sess, "./agents/LeBaguette/TF_Model_Saves/{}".format(name)) # aim at this directory/TF_Model_Saves/
 		print(self.sess.run(self.print_param)[0]) #Confirm Load
 
 
 	def load(self, name):
-		self.saver.restore(self.sess, "./agents/LeBaguette/saves/{}".format(name)) # aim at this directory/saves/
+		self.saver.restore(self.sess, "./agents/LeBaguette/TF_Model_Saves/{}".format(name)) # aim at this directory/TF_Model_Saves/
 		print(self.sess.run(self.print_param)[0]) #Confirm Load

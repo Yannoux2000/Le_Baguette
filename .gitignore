@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Saved tensorflow files
+TF_Model_Saves/*
