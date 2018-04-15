@@ -20,7 +20,7 @@ OBS_SIZE = 60
 EXP_VAL = 20
 
 class Agent:
-	def __init__(self, name, team, index,  bot_parameters=None):
+	def __init__(self, name, team, index, bot_parameters=None):
 		self.name = name
 		self.team = team  # 0 towards positive goal, 1 towards negative goal.
 		self.index = index

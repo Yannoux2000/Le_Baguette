@@ -9,7 +9,6 @@ EPSILON = 0.2				# for clipping surrogate objective
 A_DIM = 8					# action dimension
 
 class Model():
-
 	def Policy_Net(self, name, trainable, hidden=[200]):
 		with tf.variable_scope(name):
 			l1 = self.t_states

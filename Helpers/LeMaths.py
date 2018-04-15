@@ -1,11 +1,18 @@
+#This code is the same in Le_Croissant and Le_Baguette
+
 import numpy as np
 
 URotationToRadians = np.pi / float(32768)
 
 GRAVITY = 13
 GROUND_Z_AXIS = 1.8555
-COR = 0.8
 AIR_RESISTANCE = 0.3
+
+R = 91.25
+Y = 2.0
+mu = 0.285
+C_R = 0.6
+A = 0.0003
 
 def URot_to_Degree(val):
 	return val % 65536 / 65536 * 360
@@ -31,6 +38,12 @@ class Vector3:
 
 	def __sub__(self, other):
 		return Vector3( self.x - other.x, self.y - other.y, self.z - other.z)
+
+	def __mul__(self, other):
+		if type(other) is Vector3:
+			return Vector3( self.x * other.x, self.y * other.y, self.z * other.z)
+		else : 
+			return Vector3( self.x * other, self.y * other, self.z * other)
 
 	def __str__(self):
 		return "(x: {:6.2f},y: {:6.2f},z: {:6.2f})".format(self.x,self.y,self.z)
@@ -81,6 +94,7 @@ class Vector3:
 	def correction2d_to(self, ideal):
 		return Rad_clip(ideal.yaw - self.yaw)
 
+#Convertions to objects
 def Vectorize_Np(array):
 	return Vector3(array[0],array[1],array[2])
 
@@ -93,6 +107,7 @@ def Vectorize_Vel(entity):
 def Vectorize_Avl(entity):
 	return Vector3(entity.AngularVelocity.X,entity.AngularVelocity.Y,entity.AngularVelocity.Z)
 
+
 	#Extract Car entity from the GTP, as an easier object to manipulate
 def Get_car(GTP, index):
 	return GTP.gamecars[index]
@@ -100,7 +115,7 @@ def Get_car(GTP, index):
 class Car():
 	def __init__(self, car_entity):
 		
-		self.ent = car_entity
+		self.ent = car_entity #Keep other data
 
 		self.pitch = float(car_entity.Rotation.Pitch) * URotationToRadians
 		self.yaw = float(car_entity.Rotation.Yaw) * URotationToRadians
@@ -126,8 +141,8 @@ class Car():
 
 	def Forward(self):
 
-		facing_x = np.cos(self.pitch) *  np.cos(self.yaw)
-		facing_y = np.cos(self.pitch) *  np.sin(self.yaw)
+		facing_x = np.cos(self.pitch) * np.cos(self.yaw)
+		facing_y = np.cos(self.pitch) * np.sin(self.yaw)
 		facing_z = np.sin(self.pitch)
 
 		#double check normilizations of vectors
@@ -135,8 +150,8 @@ class Car():
 
 	def Left(self):
 
-		left_x = np.cos(self.pitch) *(-np.sin(self.yaw))
-		left_y = np.cos(self.pitch) *  np.cos(self.yaw)
+		left_x = np.cos(self.pitch) * (-np.sin(self.yaw))
+		left_y = np.cos(self.pitch) * np.cos(self.yaw)
 		left_z = np.sin(self.pitch)
 
 		return Vector3(left_x, left_y, left_z).normalize()
@@ -144,9 +159,19 @@ class Car():
 	def TMat(self):
 		return Get_TMat(self.Forward(), self.Left(), self.loc)
 
+	def RMat(self):
+		return Get_TMat(self.Forward(), self.Left(), Vector3())
+
 	def localize(self, vec):
 		#Inverted from the local to global matrix generated
 		matM = np.linalg.inv(self.TMat())
+		outvec = Vectorize_Np(np.dot(matM,vec.np(1)))
+
+		return outvec
+
+	def localize_rot(self, vec):
+
+		matM = np.linalg.inv(self.RMat())
 		outvec = Vectorize_Np(np.dot(matM,vec.np(1)))
 
 		return outvec
@@ -200,8 +225,8 @@ def Car_Forward(car):
 	yaw = float(car.Rotation.Yaw) * URotationToRadians
 	roll = float(car.Rotation.Roll) * URotationToRadians
 
-	facing_x = np.cos(pitch) *  np.cos(yaw)
-	facing_y = np.cos(pitch) *  np.sin(yaw)
+	facing_x = np.cos(pitch) *	np.cos(yaw)
+	facing_y = np.cos(pitch) *	np.sin(yaw)
 	facing_z = np.sin(pitch)
 
 	#double check normilizations of vectors
@@ -214,12 +239,13 @@ def Car_Left(car):
 	roll = float(car.Rotation.Roll) * URotationToRadians
 
 	facing_x = np.cos(pitch) *(-np.sin(yaw))
-	facing_y = np.cos(pitch) *  np.cos(yaw)
+	facing_y = np.cos(pitch) *	np.cos(yaw)
 	facing_z = np.sin(pitch)
 
 	#double check normilizations of vectors
 	return Vector3(facing_x, facing_y, facing_z).normalize()
 
+#retrieve transformation matrix from car info.
 def Car_TMat(car):
 	return Get_TMat(Car_Forward(car), Car_Left(car), Vectorize_Loc(car))
 
@@ -238,6 +264,7 @@ def Get_TMat(f, l, t):
 	#This matrix convert from local to global
 	return np.concatenate((f.np(0), l.np(0), u.np(0), t.np(1)), axis=1)
 
+#using matrix algorithms to find local and global coords
 def to_local(car, vec):
 	#Inverted from the local to global matrix generated
 	matM = np.linalg.inv(Car_TMat(car))
@@ -252,7 +279,23 @@ def to_global(car, vec):
 
 	return outvec
 
-def predict(pos, vel, time=5, timestep=0.0166):
+#inputs are vectors
+def bounce(ball_pos, ball_vel, ball_avl, normal):
+
+	v_perp = ball_pos.dot(normal) * normal
+	v_para = ball_vel - v_perp
+	v_spin = R * normal.cross(ball_avl)
+	s = v_para + v_spin
+	
+	ratio = v_perp.magnitude / s.magnitude
+	
+	delta_v_perp = - (1.0 + C_R) * v_perp
+	delta_v_para = - min(1.0, Y * ratio) * mu * s
+
+	return ball_pos, ball_vel + delta_v_perp + delta_v_para, ball_avl + A * R * delta_v_para.cross(normal)
+
+#Copied from discord not used.
+def predict(pos, vel, avl, time=5, timestep=0.0166):
 	path = [pos]
 	vel_path = [vel]
 	for _ in range(int(time / timestep)):
@@ -261,9 +304,7 @@ def predict(pos, vel, time=5, timestep=0.0166):
 		predicted_pos = path[-1] + vel_path[-1] + 0.5 * acceleration * timestep**2
 
 		if predicted_pos.z < GROUND_Z_AXIS:
-			predicted_pos.z = GROUND_Z_AXIS
-			predicted_vel.z *= COR
-			predicted_vel.z = abs(predicted_vel.z)
+			bounce(pos, vel, avl, normal)
 
 		path.append(predicted_pos)
 		vel_path.append(predicted_vel)
