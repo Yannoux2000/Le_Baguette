@@ -1,16 +1,39 @@
-# Le_Baguette
-Bot for RLBot, this is the ML Bot, it is supposed to be working from trial and error, but i keep facing issues.
+# Le Baguette (Par of the Boulangerie Bot Family) :
 
-# Instalation and use
+Welcome to Le Baguette's Repo, one of the few bots in the RLBot Community, that represente his origin country (Kinda). This bot is part of the bot family : Le Boulangerie, twin of [Le Croissant](https://github.com/inXS212/Le_Croissant). Le Baguette is **MACHINE LEARNING** meaning it is using algorithms that are intended to provoque emergent behaviours on purpose.
 
-to install Le_Baguette: 
+~~I do not take responsibilities on any revolution/genocide of the human race, provoked by the mis-usage of theses algorithm. They are presented in this repo, in educative and personal intentions.~~
 
-install RLBot,
-then extract or clone Le_Baguette in the agent folder, make sure it is in a folder,
-so everything stays in one folder. make sure to call it `Le_Baguette`.
+# Instalation and use :
 
-up to this point, follow RLBot instructions to start the bot.
+To install and run Le Baguette, you will need :
 
-The bot might take some time to start because of tensorflow import and other heavy tasks. On my computer, it takes about a minute and half to start.
+	- [RLBot](https://github.com/RLBot/RLBot), because it is useless without an environment.
+	- [Tensorflow](https://github.com/RLBot/RLBot), because it is useless without an environment.
 
-Happy ... what is it at this point ? Have a good time while watching bot play for you ?
+Conciderer checking out the RLBot repository, to fully understand the designing behind this bot.
+
+# Ideas and Todo list :
+
+	**Todo :**
+
+	+ Update to V4
+	+ Environment
+	+ Unit Tests, integrations Tests, ...
+	+ Defining and implementing RLmodel
+
+	**Ideas :**
+
+	+ tests, as in training, in external env.
+	+ external env.
+	+ playing against Le Croissant
+	+ ...
+
+# Annexes :
+
++ [Le Baguette's Repo](https://github.com/inXS212/Le_Baguette).
++ [Le Croissant's Repo](https://github.com/inXS212/Le_Croissant).
++ [RLBot](https://github.com/RLBot/RLBot).
++ [Wikipedia's source of inspiration](https://en.wikipedia.org/wiki/Baguette);
+
+~~Thoses names used for thoses two bots, Le Baguette and Le Croissant, are used in a non-serious, non-xenophobic intent, but simply as a silly joke. Anyone being offended by the uses of theses words in this, or any context, should relax and by a Chocolatine.~~
