@@ -1,7 +1,7 @@
 import numpy as np
 from Helpers.LeMaths import *
 
-class Obs_Extractor:
+class Obs_PreProcessor:
 	def __init__(self, team, index, Obs_Size = 60, Gen_Obs = None):
 		self.team = team
 		self.index = index

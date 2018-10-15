@@ -8,9 +8,6 @@ A_DIM = 8					# action dimension
 
 class Model():
 
-	def FeUdal_Net(self,name,hidden = [200]):
-		pass
-
 	def Policy_Net(self, name, A_DIM = 8, trainable, hidden = [200]):
 		"""
 		Policy for continuous actions decisions
