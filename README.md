@@ -1,10 +1,10 @@
-# Le Baguette (Par of the Boulangerie Bot Family) :
+# Le Baguette (Part of the Boulangerie Bot Family) :
 
 Welcome to Le Baguette's Repo, one of the few bots in the RLBot Community, that represente his origin country (Kinda). This bot is part of the bot family : Le Boulangerie, twin of [Le Croissant](https://github.com/inXS212/Le_Croissant). Le Baguette is **MACHINE LEARNING** meaning it is using algorithms that are intended to provoque emergent behaviours on purpose.
 
 _I do not take responsibilities on any revolution/genocide of the human race, provoked by the mis-usage of theses algorithm. They are presented in this repo, in educative and personal intentions._
 
-# Instalation and use :
+# Installation and use :
 
 To install and run Le Baguette, you will need :
 
