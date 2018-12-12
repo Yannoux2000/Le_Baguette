@@ -102,4 +102,3 @@ ENV/
 
 # Saved tensorflow files
 TF_Model_Saves/*
-LeBaguette/
